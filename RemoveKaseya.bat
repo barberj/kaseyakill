@@ -11,7 +11,7 @@ rem Windows Batch file to stop service, disable and clean registry
 
 :begin
 set service="KaseyaAVService"
-set service_dir=C:\Program Files\Kaseya
+set service_dir="C:\Program Files\Kaseya"
 
 :exists
 :: Find out if service exists
