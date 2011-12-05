@@ -8,12 +8,13 @@ rem Windows Batch file to stop service, disable and clean registry
 :: References
 :: http://www.computerhope.com/batch.htm
 :: http://ss64.com/nt/sc.html
+:: http://forums.techguy.org/dos-other/835832-solved-batch-file-if-statment.html
 
 :begin
 set service="KaseyaAVService"
 set service_dir="C:\Program Files\Kaseya"
 
-:exists
+:service_exists
 :: Find out if service exists
 sc query %service% | find "STATE" 
 if errorlevel 1 goto :end
@@ -48,9 +49,18 @@ sc delete %service%
 echo Cleaning registry 
 regedit.exe CleanRegistry.reg
 
-:filesys
+:dir_exists
 :: We have some files on the system we don't want
-if exist %service_dir% ( echo going to delete ) else ( echo doesn't exists )
+if not exist %service_dir% goto :end
+
+:: lets verify we have deltree available
+deltree /? | FIND "not recognized"
+if errorlevel 1 goto :rmdir
+deltree /Y %service_dir%
+goto :end
+
+:rmdir
+rmdir /S /Q %service_dir% 
 
 :end
 echo %service% has been removed from %computername%
